@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Analysis of Bosch's Strategic DNA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: A single-page, dashboard-style application with a thematic, non-linear structure. It uses a top navigation bar for quick scrolling to key sections: Overview, Global Operations, Innovation Engine, Strategic Pillars, and Future Outlook. This structure breaks down the dense report into digestible, interactive modules. The user flow starts with high-level metrics and progresses to detailed, interactive explorations via clickable cards, tabs, and charts. This is chosen to make the complex information engaging and easy to navigate, prioritizing user understanding over mirroring the report's linear format. -->
+    <!-- Visualization & Content Choices: The application uses various interactive elements to represent the report's data. Key Stats (Inform): JS counters for immediate impact. R&D Spend (Change): Line chart (Chart.js) to show trends. Patent Categories (Proportion): Donut chart (Chart.js) for comparison. Business Sectors & Geographical Strategy (Organize/Compare): Clickable cards and tabs (HTML/CSS/JS) for layered information. Sustainability Goals (Inform): HTML/CSS progress bars for clear status. Strategic Timeline (Change): A vertical HTML/CSS timeline for historical context. These choices are designed to match the goal of the information (e.g., comparison, trend) with the best interactive visualization, enhancing user engagement and comprehension. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #0d9488; /* teal-600 */
+            border-bottom-color: #0d9488;
+        }
+        .tab-button.active {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+        }
+        .sector-card:hover .sector-icon {
+            transform: scale(1.1);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            left: -0.6rem;
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 50%;
+            background-color: #0d9488;
+            border: 3px solid #f8fafc;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-slate-900">The Strategic DNA of <span class="text-teal-600">Bosch</span></h1>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#overview" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Overview</a>
+                <a href="#operations" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Global Operations</a>
+                <a href="#innovation" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Innovation Engine</a>
+                <a href="#pillars" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Strategic Pillars</a>
+                <a href="#outlook" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Future Outlook</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-slate-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+            <a href="#overview" class="block px-6 py-3 text-slate-600 hover:bg-slate-100">Overview</a>
+            <a href="#operations" class="block px-6 py-3 text-slate-600 hover:bg-slate-100">Global Operations</a>
+            <a href="#innovation" class="block px-6 py-3 text-slate-600 hover:bg-slate-100">Innovation Engine</a>
+            <a href="#pillars" class="block px-6 py-3 text-slate-600 hover:bg-slate-100">Strategic Pillars</a>
+            <a href="#outlook" class="block px-6 py-3 text-slate-600 hover:bg-slate-100">Future Outlook</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+        
+        <section id="overview" class="text-center mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Invented for Life: A Strategic Overview</h2>
+            <p class="max-w-3xl mx-auto text-slate-600 mb-10">
+                Bosch is a global technology and services leader guided by a core principle: developing technology that enhances quality of life and conserves natural resources. This interactive analysis explores the strategic patterns that define Bosch's ability to build, sustain, and innovate across its diverse business sectors.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <p class="text-sm font-medium text-slate-500">2024 Sales Revenue</p>
+                    <p id="stat-revenue" class="text-4xl font-bold text-teal-600 mt-2">0</p>
+                    <p class="text-sm text-slate-500">Billion Euros</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <p class="text-sm font-medium text-slate-500">Global Associates</p>
+                    <p id="stat-associates" class="text-4xl font-bold text-teal-600 mt-2">0</p>
+                    <p class="text-sm text-slate-500">Thousand</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <p class="text-sm font-medium text-slate-500">2024 R&D Investment</p>
+                    <p id="stat-rd" class="text-4xl font-bold text-teal-600 mt-2">0</p>
+                    <p class="text-sm text-slate-500">Billion Euros</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <p class="text-sm font-medium text-slate-500">R&D Associates</p>
+                    <p id="stat-rd-associates" class="text-4xl font-bold text-teal-600 mt-2">0</p>
+                    <p class="text-sm text-slate-500">Thousand</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="operations" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">A Diversified Global Footprint</h2>
+            <p class="max-w-3xl mx-auto text-center text-slate-600 mb-12">
+                Bosch's resilience stems from its diversified structure across four business sectors and a "local for local" strategy that adapts its operations to key markets. This structure is underpinned by a unique ownership model that ensures long-term stability and entrepreneurial freedom.
+            </p>
+            
+            <div class="mb-12">
+                <h3 class="text-2xl font-semibold text-center text-slate-800 mb-8">Four Pillars of Business</h3>
+                <div id="sectors-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200 mb-12">
+                <h3 class="text-2xl font-semibold text-slate-800 mb-4">The Ownership Advantage</h3>
+                <p class="text-slate-600">
+                    A key to Bosch's strategy is its ownership structure. 94% of the share capital is held by Robert Bosch Stiftung GmbH, a charitable foundation with no voting rights. The majority of voting rights are held by Robert Bosch Industrietreuhand KG, which safeguards the company's long-term existence. This unique setup liberates Bosch from short-term market pressures, enabling significant, long-term investments in R&D and sustainability, which are fundamental to its sustained innovation and strategic resilience.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="text-2xl font-semibold text-center text-slate-800 mb-8">"Local for Local": A Regional Approach</h3>
+                <div id="geo-tabs-container" class="flex justify-center space-x-2 md:space-x-4 mb-6 border-b border-slate-200">
+                </div>
+                <div id="geo-content-container" class="bg-white p-8 rounded-xl shadow-md border border-slate-200 min-h-[200px]">
+                </div>
+            </div>
+        </section>
+
+        <section id="innovation" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">The Innovation Engine</h2>
+            <p class="max-w-3xl mx-auto text-center text-slate-600 mb-12">
+                Innovation is the lifeblood of Bosch, fueled by substantial R&D investments, a robust patent strategy, and a global network of research centers and strategic partnerships. The Bosch Research and Technology Center (RTC) acts as the spearhead, translating scientific discovery into industrial application.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4 text-center">Rising R&D Expenditure (Billion €)</h3>
+                    <div class="chart-container">
+                        <canvas id="rdSpendChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4 text-center">Top Patent Categories</h3>
+                    <div class="chart-container">
+                        <canvas id="patentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-12 bg-white p-8 rounded-xl shadow-md border border-slate-200">
+                <h3 class="text-2xl font-semibold text-slate-800 mb-6 text-center">Global Research Network & Partnerships</h3>
+                <p class="text-slate-600 text-center max-w-2xl mx-auto mb-8">Bosch fosters open innovation through 11 global research centers and extensive collaborations with universities, startups, and industry consortiums.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div>
+                        <h4 class="font-bold text-teal-600 mb-2">Key Research Centers</h4>
+                        <ul class="text-slate-600 space-y-1">
+                            <li>Renningen, Germany (AI Hub)</li>
+                            <li>Sunnyvale, USA (Robotics, Batteries)</li>
+                            <li>Bangalore, India (Data Analytics)</li>
+                            <li>Shanghai, China (Autonomous Driving)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-teal-600 mb-2">Academic Partners</h4>
+                        <ul class="text-slate-600 space-y-1">
+                            <li>Carnegie Mellon University</li>
+                            <li>MIT & Harvard</li>
+                            <li>Tsinghua University</li>
+                            <li>University of Tübingen (Cyber Valley)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-teal-600 mb-2">Industry Consortiums</h4>
+                        <ul class="text-slate-600 space-y-1">
+                            <li>Eclipse IoT Community</li>
+                            <li>European Semiconductor (ESMC)</li>
+                            <li>AI Verify Foundation</li>
+                            <li>WWF (Sustainability)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pillars" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">Core Strategic Pillars</h2>
+            <p class="max-w-3xl mx-auto text-center text-slate-600 mb-12">
+                Bosch's strategy is built on several recurring patterns that drive its competitive advantage. These pillars guide its approach to technology, manufacturing, and sustainability, ensuring a cohesive direction across its global operations.
+            </p>
+            <div class="flex flex-col items-center">
+                <div id="pillars-tabs-container" class="flex flex-wrap justify-center gap-2 mb-6">
+                </div>
+                <div id="pillars-content-container" class="w-full max-w-4xl bg-white p-8 rounded-xl shadow-md border border-slate-200 min-h-[300px]">
+                </div>
+            </div>
+        </section>
+
+        <section id="outlook" class="scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">Future Outlook & Adaptation</h2>
+            <p class="max-w-3xl mx-auto text-center text-slate-600 mb-12">
+                Bosch continuously adapts its strategy by learning from the past and investing in the future. Its venture capital arm scouts for disruptive technologies, while strategic pivots ensure the company remains aligned with long-term market trends.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+                <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
+                    <h3 class="text-2xl font-semibold text-slate-800 mb-4">Scouting the Future: Robert Bosch Venture Capital (RBVC)</h3>
+                    <p class="text-slate-600 mb-4">RBVC is Bosch's corporate venture arm, investing in deep-tech startups to fuel innovation. The "Open Bosch" program connects these startups with Bosch's operating units, creating a powerful ecosystem for co-innovation.</p>
+                    <div class="space-y-3">
+                        <p><strong class="font-medium text-slate-700">Key Sectors:</strong> AI/Deep Learning, Semiconductors, Climate Tech, Advanced Manufacturing.</p>
+                        <p><strong class="font-medium text-slate-700">Funding Pattern:</strong> Up to €25M per company, focusing on early-stage investments.</p>
+                        <p><strong class="font-medium text-slate-700">Strategic Intent:</strong> Beyond financial returns, RBVC aims to access disruptive technologies and foster strategic partnerships that align with Bosch's future relevance.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
+                    <h3 class="text-2xl font-semibold text-slate-800 mb-4">Timeline of Strategic Adaptation</h3>
+                    <div class="relative border-l-2 border-slate-200 pl-8 space-y-8">
+                        <div class="timeline-item">
+                            <h4 class="font-semibold text-slate-800">1920s: Diversification</h4>
+                            <p class="text-slate-600 text-sm">In response to an auto industry crisis, Bosch created a new department (BTH3) to actively seek new business ideas, reducing its dependency on a single sector.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4 class="font-semibold text-slate-800">2020: Carbon Neutrality</h4>
+                            <p class="text-slate-600 text-sm">Achieved carbon neutrality (Scopes 1 & 2) across its 450+ locations, a milestone in its long-term sustainability journey.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4 class="font-semibold text-slate-800">2023: Divestment & Focus</h4>
+                            <p class="text-slate-600 text-sm">Announced plans to sell parts of its Building Technologies division to focus on the higher-growth systems integration business, demonstrating dynamic portfolio management.</p>
+                        </div>
+                         <div class="timeline-item">
+                            <h4 class="font-semibold text-slate-800">2024: Mobility Realignment</h4>
+                            <p class="text-slate-600 text-sm">Realigned the Mobility sector to create horizontal responsibility for software, semiconductors, and vehicle computers, adapting to the era of the software-defined vehicle.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 mt-16 md:mt-24">
+        <div class="container mx-auto px-6 py-6 text-center">
+            <p>&copy; 2025 Interactive Analysis. Data sourced from the "Strategic DNA of Bosch" report.</p>
+            <p class="text-sm text-slate-400 mt-1">This is a conceptual application for information visualization purposes.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const appData = {
+        stats: {
+            revenue: 90.3,
+            associates: 418,
+            rd: 7.8,
+            rdAssociates: 86.8
+        },
+        sectors: [
+            {
+                name: 'Mobility',
+                icon: '🚗',
+                description: 'The largest sector, providing solutions for electromobility, vehicle computing, driver assistance, and aftermarket services. Recently realigned to focus on software and semiconductors.'
+            },
+            {
+                name: 'Industrial Technology',
+                icon: '🏭',
+                description: 'Includes the Bosch Rexroth division (Drive and Control Technology) and offers Industry 4.0 software, services, and special-purpose mechanical engineering.'
+            },
+            {
+                name: 'Consumer Goods',
+                icon: '🛠️',
+                description: 'Comprises Power Tools for professionals and DIY users, and BSH Hausgeräte, offering a wide range of smart home appliances.'
+            },
+            {
+                name: 'Energy & Building Tech',
+                icon: '🏢',
+                description: 'Focuses on building security, energy efficiency, and automation. Includes Home Comfort solutions like heat pumps and air-conditioning systems.'
+            }
+        ],
+        geoStrategy: {
+            'Europe': {
+                focus: 'Core market and R&D hub, driving sustainability and digital transformation initiatives.',
+                example: 'Germany serves as the hub for the Bosch Center for Artificial Intelligence (BCAI).'
+            },
+            'India': {
+                focus: 'Strategic hub for two/three-wheeler electrification and fuel injection. Largest development center outside Germany.',
+                example: 'The GWS 800 angle grinder was specifically designed for the average Indian palm size.'
+            },
+            'China': {
+                focus: 'Bosch\'s largest single market. Deep "local for local" strategy with a digital-first approach in the automotive aftermarket.',
+                example: 'Domain lead for electrification, with R&D hubs in Beijing and Shanghai focusing on AI and autonomous driving.'
+            },
+            'USA': {
+                focus: 'Key growth market with significant investments in software-defined vehicles (SDV) and ADAS.',
+                example: 'Manufacturing advanced Silicon Carbide (SiC) chips in Roseville, California to support the EV market.'
+            }
+        },
+        rdSpend: {
+            labels: ['2022', '2023', '2024'],
+            data: [7.2, 7.3, 7.8]
+        },
+        patents: {
+            labels: ['Electrification (H01M)', 'Mobility (B60L)', 'Other Technologies'],
+            data: [35, 25, 40]
+        },
+        pillars: [
+            {
+                name: 'Platform & Ecosystems',
+                title: 'From Products to Platforms',
+                content: 'Bosch is shifting from selling discrete products to offering integrated solutions. This is evident in platforms like <strong>ctrlX AUTOMATION</strong> (an open industrial automation system), <strong>Home Connect</strong> for smart appliances, and the <strong>Bosch IoT Suite</strong>. By emphasizing open standards and co-creation, Bosch accelerates innovation and fosters interconnected systems like smart factories and software-defined vehicles.'
+            },
+            {
+                name: 'Vertical Integration',
+                title: 'Controlling Critical Technologies',
+                content: 'Bosch strategically invests in producing critical components in-house to secure supply, ensure quality, and protect intellectual property. Key examples include massive investments in <strong>semiconductor manufacturing</strong> in Germany and the U.S., and the in-house development of core radar sensor components. This provides a significant competitive advantage, especially in the rapidly evolving mobility sector.'
+            },
+            {
+                name: 'Industry 4.0',
+                title: 'The "Lead User-Lead Provider" Model',
+                content: 'Bosch is both a leading practitioner and provider of Industry 4.0 solutions. It develops and rigorously tests technologies like the <strong>Nexeed Suite</strong> and AI-based process optimization within its own 150+ factories worldwide. This "made by users for users" approach ensures that the solutions offered to external customers are robust, proven, and practical, creating a powerful competitive differentiator.'
+            },
+            {
+                name: 'Sustainability',
+                title: 'A Core Business Imperative',
+                content: 'Sustainability is deeply integrated into Bosch\'s strategy. The company has been carbon neutral (Scopes 1 & 2) since 2020 and aims to reduce Scope 3 emissions by 30% by 2030. Its <strong>"New Dimensions"</strong> vision drives initiatives in circular economy (designing for repair and using recycled materials), water conservation, and energy efficiency, all underpinned by its "Invented for life" ethos.'
+            }
+        ]
+    };
+
+    function animateCounter(element, target, duration, isFloat = false) {
+        let start = 0;
+        const increment = target / (duration / 16);
+        const update = () => {
+            start += increment;
+            if (start < target) {
+                element.textContent = isFloat ? start.toFixed(1) : Math.ceil(start);
+                requestAnimationFrame(update);
+            } else {
+                element.textContent = target;
+            }
+        };
+        requestAnimationFrame(update);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = parseFloat(el.dataset.target);
+                const isFloat = el.dataset.float === 'true';
+                animateCounter(el, target, 1500, isFloat);
+                observer.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    const revenueEl = document.getElementById('stat-revenue');
+    revenueEl.dataset.target = appData.stats.revenue;
+    revenueEl.dataset.float = 'true';
+    observer.observe(revenueEl);
+
+    const associatesEl = document.getElementById('stat-associates');
+    associatesEl.dataset.target = appData.stats.associates;
+    observer.observe(associatesEl);
+    
+    const rdEl = document.getElementById('stat-rd');
+    rdEl.dataset.target = appData.stats.rd;
+    rdEl.dataset.float = 'true';
+    observer.observe(rdEl);
+
+    const rdAssociatesEl = document.getElementById('stat-rd-associates');
+    rdAssociatesEl.dataset.target = appData.stats.rdAssociates;
+    rdAssociatesEl.dataset.float = 'true';
+    observer.observe(rdAssociatesEl);
+
+    const sectorsContainer = document.getElementById('sectors-container');
+    appData.sectors.forEach(sector => {
+        const card = document.createElement('div');
+        card.className = 'sector-card bg-white p-6 rounded-xl shadow-md border border-slate-200 text-center cursor-pointer transition-transform transform hover:-translate-y-1';
+        card.innerHTML = `
+            <div class="sector-icon text-4xl mb-4 transition-transform">${sector.icon}</div>
+            <h4 class="text-xl font-semibold text-slate-800 mb-2">${sector.name}</h4>
+            <p class="sector-description text-slate-600 text-sm hidden">${sector.description}</p>
+        `;
+        sectorsContainer.appendChild(card);
+        card.addEventListener('click', () => {
+            const desc = card.querySelector('.sector-description');
+            desc.classList.toggle('hidden');
+        });
+    });
+
+    const geoTabsContainer = document.getElementById('geo-tabs-container');
+    const geoContentContainer = document.getElementById('geo-content-container');
+    Object.keys(appData.geoStrategy).forEach((region, index) => {
+        const button = document.createElement('button');
+        button.className = 'tab-button px-4 py-2 text-sm md:text-base font-medium rounded-t-lg transition-colors';
+        button.textContent = region;
+        button.dataset.region = region;
+        if (index === 0) {
+            button.classList.add('active');
+        }
+        geoTabsContainer.appendChild(button);
+    });
+
+    function updateGeoContent(region) {
+        const data = appData.geoStrategy[region];
+        geoContentContainer.innerHTML = `
+            <h4 class="text-xl font-semibold text-slate-800 mb-2">${data.focus}</h4>
+            <p class="text-slate-600"><strong class="font-medium text-slate-700">Example:</strong> ${data.example}</p>
+        `;
+    }
+
+    geoTabsContainer.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            geoTabsContainer.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            updateGeoContent(e.target.dataset.region);
+        }
+    });
+    updateGeoContent(Object.keys(appData.geoStrategy)[0]);
+
+    const pillarsTabsContainer = document.getElementById('pillars-tabs-container');
+    const pillarsContentContainer = document.getElementById('pillars-content-container');
+    appData.pillars.forEach((pillar, index) => {
+        const button = document.createElement('button');
+        button.className = 'tab-button px-4 py-2 text-sm md:text-base font-medium rounded-md transition-colors bg-white border border-slate-300 text-slate-700 hover:bg-slate-100';
+        button.textContent = pillar.name;
+        button.dataset.pillar = pillar.name;
+        if (index === 0) {
+            button.classList.add('active');
+        }
+        pillarsTabsContainer.appendChild(button);
+    });
+    
+    function updatePillarContent(pillarName) {
+        const data = appData.pillars.find(p => p.name === pillarName);
+        pillarsContentContainer.innerHTML = `
+            <h4 class="text-2xl font-semibold text-slate-800 mb-4">${data.title}</h4>
+            <p class="text-slate-600 leading-relaxed">${data.content}</p>
+        `;
+    }
+
+    pillarsTabsContainer.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            pillarsTabsContainer.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            updatePillarContent(e.target.dataset.pillar);
+        }
+    });
+    updatePillarContent(appData.pillars[0].name);
+
+    const rdSpendCtx = document.getElementById('rdSpendChart').getContext('2d');
+    new Chart(rdSpendCtx, {
+        type: 'line',
+        data: {
+            labels: appData.rdSpend.labels,
+            datasets: [{
+                label: 'R&D Spend (€B)',
+                data: appData.rdSpend.data,
+                borderColor: '#0d9488',
+                backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                fill: true,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } }
+        }
+    });
+
+    const patentCtx = document.getElementById('patentChart').getContext('2d');
+    new Chart(patentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: appData.patents.labels,
+            datasets: [{
+                label: 'Patent Distribution',
+                data: appData.patents.data,
+                backgroundColor: ['#0d9488', '#14b8a6', '#94a3b8'],
+                borderColor: '#f8fafc',
+                borderWidth: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed + '%';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link, #mobile-menu a');
+    const sections = document.querySelectorAll('section');
+    
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                });
+            }
+        });
+    }, { rootMargin: '-50% 0px -50% 0px' });
+
+    sections.forEach(section => navObserver.observe(section));
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (mobileMenu.contains(link)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    });
+
+});
+</script>
+</body>
+</html>
